@@ -1,0 +1,177 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>supernova by rackerhacker</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>supernova</h1>
+        <p>Use novaclient with multiple OpenStack nova environments the easy way</p>
+
+        <p class="view"><a href="https://github.com/rackerhacker/supernova">View the Project on GitHub <small>rackerhacker/supernova</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/rackerhacker/supernova/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/rackerhacker/supernova/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/rackerhacker/supernova">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h2>supernova - use novaclient with multiple nova environments the easy way</h2>
+
+<p>You may like <em>supernova</em> if you regularly have the following problems:</p>
+
+<ul>
+<li>You hate trying to source multiple novarc files when using <em>nova</em>
+</li>
+<li>You get your terminals confused and do the wrong things in the wrong nova environment</li>
+<li>You don't like remembering things</li>
+<li>You want to keep sensitive API keys and passwords out of plain text configuration files (see the "Working with keyrings" section toward the end)</li>
+<li>You need to share common skeleton environment variables for <em>nova</em> with your teams</li>
+</ul><p>If any of these complaints ring true, <em>supernova</em> is for you. <em>supernova</em> manages multiple nova environments without sourcing novarc's or mucking with environment variables.</p>
+
+<p><img src="http://lolcdn.mhtx.net/firstworldproblems-multiplenovaenvironments-20120316-072224.jpg" alt="First world problems - nova style"></p>
+
+<h3>Installation</h3>
+
+<pre><code>git clone git://github.com/rackerhacker/supernova.git
+cd supernova
+python setup.py install
+</code></pre>
+
+<h3>Configuration</h3>
+
+<p>For <em>supernova</em> to work properly, each environment must be defined in <code>~/.supernova</code> (in your user's home directory).  The data in the file is exactly the same as the environment variables which you would normally use when running <em>nova</em>.  You can copy/paste from your novarc files directly into configuration sections within <code>~/.supernova</code>.</p>
+
+<p>Here's an example of two environments, <strong>production</strong> and <strong>development</strong>:</p>
+
+<pre><code>[production]
+NOVA_URL=http://production.nova.example.com:8774/v1.1/
+NOVA_VERSION=1.1
+NOVA_USERNAME = jsmith
+NOVA_API_KEY = fd62afe2-4686-469f-9849-ceaa792c55a6
+NOVA_PROJECT_ID = nova-production
+
+[development]
+NOVA_URL=http://dev.nova.example.com:8774/v1.1/
+NOVA_VERSION=1.1
+NOVA_USERNAME = jsmith
+NOVA_API_KEY = 40318069-6069-4d9f-836d-a46df17fc8d1
+NOVA_PROJECT_ID = nova-production
+</code></pre>
+
+<p>When you use <em>supernova</em>, you'll refer to these environments as <strong>production</strong> and <strong>development</strong>.  Every environment is specified by its configuration header name.</p>
+
+<h3>Usage</h3>
+
+<pre><code>supernova [--debug] [--list] [environment] [novaclient arguments...]
+
+Options:
+-h, --help   show this help message and exit
+-d, --debug  show novaclient debug output (overrides NOVACLIENT_DEBUG)
+-l, --list   list all configured environments
+</code></pre>
+
+<h5>Passing commands to <em>nova</em>
+</h5>
+
+<p>For example, if you wanted to list all instances within the <strong>production</strong> environment:</p>
+
+<pre><code>supernova production list
+</code></pre>
+
+<p>Show a particular instance's data in the preprod environment:</p>
+
+<pre><code>supernova preprod show 3edb6dac-5a75-486a-be1b-3b15fd5b4ab0a
+</code></pre>
+
+<p>The first argument is generally the environment argument and it is expected to be a single word without spaces. Any text after the environment argument is passed directly to <em>nova</em>.</p>
+
+<h5>Debug override</h5>
+
+<p>You may optionally pass <code>--debug</code> as the first argument (before the environment argument) to inject the <code>NOVACLIENT_DEBUG=1</code> option into the process environment to see additional debug information about the requests being made to the API:</p>
+
+<pre><code>supernova --debug production list
+</code></pre>
+
+<p>As before, any text after the environment argument is passed directly to <em>nova</em>.</p>
+
+<h5>Listing your configured environments</h5>
+
+<p>You can list all of your configured environments by using the <code>--list</code> argument.</p>
+
+<h3>Working with keyrings</h3>
+
+<p>Due to security policies at certain companies or due to general paranoia, some users may not want API keys or passwords stored in a plaintext <em>supernova</em> configuration file.  Luckily, support is now available (via the <a href="http://pypi.python.org/pypi/keyring">keyring</a> module) for storing any configuration value within your operating system's keychain.  This has been tested on the following platforms:</p>
+
+<ul>
+<li>Mac: Keychain Access.app</li>
+<li>Linux: gnome-keyring, kwallet</li>
+</ul><p>To get started, you'll need to choose an environment and a configuration option.  Here's an example of some data you might not want to keep in plain text:</p>
+
+<pre><code>supernova-keyring --set production NOVA_API_KEY
+</code></pre>
+
+<p><strong>TIP</strong>: If you need to use the same data for multiple environments, you can use a global credential item very easily:</p>
+
+<pre><code>supernova-keyring --set global MyCompanyLDAPPassword
+</code></pre>
+
+<p>Once it's stored, you can test a retrieval:</p>
+
+<pre><code># Normal, per-environment storage
+supernova-keyring --get production NOVA_API_KEY
+
+# Global storage
+supernova-keyring --get global MyCompanyLDAPPassword
+</code></pre>
+
+<p>You'll need to confirm that you want the data from your keychain displayed in plain text (to hopefully thwart shoulder surfers).</p>
+
+<p>Once you've stored your sensitive data, simply adjust your <em>supernova</em> configuration file:</p>
+
+<pre><code>#NOVA_API_KEY = really_sensitive_api_key_here
+
+# If using storage per environment
+NOVA_API_KEY = USE_KEYRING
+
+# If using global storage
+NOVA_API_KEY = USE_KEYRING['MyCompanyLDAPPassword']
+</code></pre>
+
+<p>When <em>supernova</em> reads your configuration file and spots a value of <code>USE_KEYRING</code>, it will look for credentials stored under <code>NOVA_API_KEY</code> for that environment automatically.  If your keyring doesn't have a corresponding credential, you'll get an exception.</p>
+
+<h4>A brief note about environment variables</h4>
+
+<p><em>supernova</em> will only replace and/or append environment variables to the already present variables for the duration of the <em>nova</em> execution. If you have <code>NOVA_USERNAME</code> set outside the script, it won't be used in the script since the script will pull data from <code>~/.supernova</code> and use it to run <em>nova</em>. In addition, any variables which are set prior to running <em>supernova</em> will be left unaltered when the script exits.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/rackerhacker">rackerhacker</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-1115744-15");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
