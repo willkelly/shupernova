@@ -1,0 +1,1 @@
+function supernova() { ( source "${HOME}/.supernova/${1}"; shift; nova "$@") }
