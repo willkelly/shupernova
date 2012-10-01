@@ -15,7 +15,7 @@
 #     export SSH_AUTH_SOCK
 #fi
 
-function os_env() {
+function os-env() {
     f=${HOME}/.supernova/${1}; shift
     cmd=$1; shift
     if [[ -n "${GPG_OPTS}" ]]; then
