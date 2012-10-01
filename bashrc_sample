@@ -1,1 +1,32 @@
-function supernova() { ( source "${HOME}/.supernova/${1}"; shift; nova "$@") }
+#Uncomment the following to enable encryption You'll need to have gpg
+#installed, and you should probably set default-recipient-self and use_agent in
+#~/.gnupg/gpg.conf
+
+#GPG_OPTS=${GPG_OPTS:-"-q -e"}
+#GPG_TTY=$(tty)
+#export GPG_TTY
+# if ! pgrep gpg-agent >/dev/null; then
+#     gpg-agent --daemon --enable-ssh-support \
+#         --write-env-file "${HOME}/.gpg-agent-info" &>/dev/null
+# fi
+# if [ -f "${HOME}/.gpg-agent-info" ]; then
+#     . "${HOME}/.gpg-agent-info"
+#     export GPG_AGENT_INFO
+#     export SSH_AUTH_SOCK
+#fi
+
+function os_env() {
+    f=${HOME}/.supernova/${1}; shift
+    cmd=$1; shift
+    if [[ -n "${GPG_OPTS}" ]]; then
+        e="${f}.gpg"
+        ! [[ -e "${e}" ]] && gpg ${GPG_OPTS} "${f}" && rm -f "${f}"
+        ( source <(gpg --batch -q -d ${e}) && $cmd "$@" )
+    else
+        ( source "${f}"; $cmd "$@")
+    fi
+}
+function supernova() {
+    os=$1; shift
+    os_env $os nova "$@"
+}

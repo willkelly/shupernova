@@ -6,6 +6,7 @@ You may like *supernova* if you regularly have the following problems:
 * You get your terminals confused and do the wrong things in the wrong nova environment
 * You don't like remembering things
 * You need to share common skeleton environment variables for *nova* with your teams
+* You don't want to leave passwords lying around in plaintext.
 
 If any of these complaints ring true, *supernova* is for you. *supernova* manages multiple nova environments without sourcing novarc's or mucking with environment variables.
 
@@ -14,6 +15,8 @@ If any of these complaints ring true, *supernova* is for you. *supernova* manage
     $ cat bashrc_sample >> ~/.bashrc
 
 ### Configuration
+
+Enabling encryption: Uncomment the gpg related lines in bashrc_sample.
 
 For *supernova* to work properly, each environment must be defined in `~/.supernova` (in your user's home directory).  The data in the file is exactly the same as the environment variables which you would normally use when running *nova*.  You can copy/paste from your novarc files directly into configuration sections within `~/.supernova`.
 
@@ -39,7 +42,9 @@ Here's an example of two environments, **production** and **development**:
     NOVA_PROJECT_ID = nova-production
     -->cut<--
 
-If you already have an existing novarc, you can use the "cp" technology to turn it into a *supernova* profile.
+If you already have an existing novarc, you can use the "cp"
+technology to turn it into a *supernova* profile.  These profiles will
+be automatically encrypted as encountered if you enable the gpg options.
 
 When you use *supernova*, you'll refer to these environments as **production** and **development**.  Every environment is specified by its configuration header name.
 
