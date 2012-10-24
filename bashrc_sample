@@ -14,9 +14,9 @@
 #     export GPG_AGENT_INFO
 #     export SSH_AUTH_SOCK
 #fi
-
+export SUPERNOVA_PATH="${SUPERNOVA_PATH:-${HOME}/.supernova}"
 function os-env() {
-    f=${HOME}/.supernova/${1}; shift
+    f="${SUPERNOVA_PATH}/${1}"; shift
     cmd=$1; shift
     if [[ -n "${GPG_OPTS}" ]]; then
         e="${f}.gpg"
