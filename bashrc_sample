@@ -1,19 +1,5 @@
-#Uncomment the following to enable encryption You'll need to have gpg
-#installed, and you should probably set default-recipient-self and use_agent in
-#~/.gnupg/gpg.conf
+#Core supernova functionality
 
-#GPG_OPTS=${GPG_OPTS:-"-q -e"}
-#GPG_TTY=$(tty)
-#export GPG_TTY
-# if ! pgrep gpg-agent >/dev/null; then
-#     gpg-agent --daemon --enable-ssh-support \
-#         --write-env-file "${HOME}/.gpg-agent-info" &>/dev/null
-# fi
-# if [ -f "${HOME}/.gpg-agent-info" ]; then
-#     . "${HOME}/.gpg-agent-info"
-#     export GPG_AGENT_INFO
-#     export SSH_AUTH_SOCK
-#fi
 export SUPERNOVA_PATH="${SUPERNOVA_PATH:-${HOME}/.supernova}"
 function os-env() {
     f="${SUPERNOVA_PATH}/${1}"; shift
@@ -30,3 +16,35 @@ function supernova() {
     os=$1; shift
     os-env $os nova "$@"
 }
+
+# Uncomment the following to enable encryption You'll need to have gpg
+# installed, and you should probably set default-recipient-self and use_agent in
+# ~/.gnupg/gpg.conf
+
+## BEGIN ENCRYPTION BLOCK
+#GPG_OPTS=${GPG_OPTS:-"-q -e"}
+#GPG_TTY=$(tty)
+#export GPG_TTY
+# if ! pgrep gpg-agent >/dev/null; then
+#     gpg-agent --daemon --enable-ssh-support \
+#         --write-env-file "${HOME}/.gpg-agent-info" &>/dev/null
+# fi
+# if [ -f "${HOME}/.gpg-agent-info" ]; then
+#     . "${HOME}/.gpg-agent-info"
+#     export GPG_AGENT_INFO
+#     export SSH_AUTH_SOCK
+#fi
+## END ENCRYPTION BLOCK
+
+# Uncomment the following to enable bash completion on supernova environments
+
+## BEGIN COMPLETION BLOCK
+# function _supernova() {
+#     COMPREPLY=()
+#     cur=${COMP_WORDS[COMP_CWORD]}
+#     opts=$(ls $SUPERNOVA_PATH | perl -ne 's/\.gpg$//;print;')
+#     COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+#     return 0
+# }
+# complete -F _supernova supernova
+## END COMPLETION BLOCK
