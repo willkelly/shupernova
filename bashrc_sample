@@ -28,5 +28,5 @@ function os-env() {
 }
 function supernova() {
     os=$1; shift
-    os_env $os nova "$@"
+    os-env $os nova "$@"
 }
